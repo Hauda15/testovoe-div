@@ -19,4 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('requests', TicketController::class);
+Route::get('requests', [TicketController::class, 'index'])->name('requests.index');
+Route::get('requests/create', [TicketController::class, 'create'])->name('requests.create');
+Route::post('requests', [TicketController::class, 'store'])->name('requests.store');
+Route::put('requests/{id}', [TicketController::class, 'update'])->name('requests.update');

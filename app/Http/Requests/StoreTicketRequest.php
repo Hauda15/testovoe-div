@@ -24,18 +24,19 @@ class StoreTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'email' => 'required|email:rfc,dns',
-            'message' => 'required|string',
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc,dns'],
+            'message' => ['required', 'string'],
         ];
     }
 
     public function messages(): array
     {
         return [
-          'name.required' => 'Необходимо указать имя пользователя',
-          'email.required' => 'Необходимо указать электронную почту пользователя',
-          'message.required' => 'Сообщение не может быть пустым',
+            'name.required' => 'Необходимо указать имя (name: {Имя пользователя})',
+            'email.required' => 'Необходимо указать электронную почту (email: {Электронная почта})',
+            'email.email:rfc,dns' => 'Проверьте формат введеной почты',
+            'message.required' => 'Сообщение не может быть пустым',
         ];
     }
 }

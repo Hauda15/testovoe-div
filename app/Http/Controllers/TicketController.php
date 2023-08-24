@@ -6,10 +6,16 @@ use App\Enums\TicketStatus;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Models\Ticket;
-use Illuminate\Http\Request;
+use App\Services\TicketService;
+use Illuminate\Validation\ValidationException;
 
 class TicketController extends Controller
 {
+    public function __construct()
+    {
+        $this->service = new TicketService();
+    }
+
     public function index()
     {
         $tickets = Ticket::where('status', 'Active')->get();
@@ -22,9 +28,7 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request)
     {
-        dd($request->validated());
-        $ticket = new Ticket($request->validated());
-        if($ticket->save()) {
+        if($this->service->storeTicket($request)) {
             return response(
                 'Заявка успешно отправлена!', 200
             )->header('Content-Type', 'text/plain');
@@ -40,14 +44,13 @@ class TicketController extends Controller
      */
     public function update(UpdateTicketRequest $request, string $id)
     {
-        $ticket = Ticket::findOrFail($id);
-        $ticket->update($request->validated());
+        $ticket = $this->service->updateTicket($id, $request);
         return response($ticket, 200);
     }
 
     public function create()
     {
-
+        return view('Ticket.create');
     }
 
     /**

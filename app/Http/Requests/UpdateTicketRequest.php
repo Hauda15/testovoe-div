@@ -23,9 +23,27 @@ class UpdateTicketRequest extends FormRequest
      */
     public function rules(): array
     {
+        switch($this->request->get('status', 'Active')) {
+            case 'Resolved':
+                return [
+                    'status' => [new Enum(TicketStatus::class)],
+                    'comment' => ['required', 'string']
+                ];
+                break;
+            Default:
+                return [
+                    'status' => [new Enum(TicketStatus::class)],
+                    'comment' => ['string']
+                ];
+                break;
+        }
+    }
+
+    public function messages(): array
+    {
         return [
-            'status' => [new Enum(TicketStatus::class)],
-            'comment' => 'required|string',
+            'status' => 'Неверное значение статуса. Возможные значения: Active, Resolved',
+            'comment.required' => 'Необходимо ответить в поле (comment: {Текст ответа})',
         ];
     }
 }
