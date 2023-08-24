@@ -22,6 +22,7 @@ class TicketService
     {
         $ticket = Ticket::findOrFail($id);
         $ticket->update($request->validated());
+        Mail::to($ticket->email)->send(new TicketMail($ticket));
         return $ticket;
     }
 }
