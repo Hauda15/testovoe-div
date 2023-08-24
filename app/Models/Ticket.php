@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
-    use HasFactory;
+    protected $table = 'tickets';
+
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name', 'email', 'message',
+        'name', 'email', 'message', 'comment', 'status',
+    ];
+
+    protected $casts = [
+        'status' => TicketStatus::class,
     ];
 }

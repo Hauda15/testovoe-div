@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTicketRequest extends FormRequest
 {
+    protected $stopOnFirstFailure = true;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,9 +24,18 @@ class StoreTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string',
-            'email' => 'string',
-            'message' => 'string',
+            'name' => 'required|string',
+            'email' => 'required|email:rfc,dns',
+            'message' => 'required|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+          'name.required' => 'Необходимо указать имя пользователя',
+          'email.required' => 'Необходимо указать электронную почту пользователя',
+          'message.required' => 'Сообщение не может быть пустым',
         ];
     }
 }
