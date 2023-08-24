@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TicketStatus;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Models\Ticket;
 use App\Services\TicketService;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TicketController extends Controller
 {
@@ -53,11 +52,13 @@ class TicketController extends Controller
         return view('Ticket.create');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Ticket $ticket)
+    public function destroy(string $id)
     {
-        //
+        try {
+            Ticket::findOrFail($id)->delete();
+            return response('Успешно удалено', 200);
+        } catch (ModelNotFoundException) {
+            return 'Не найдено такой заявки.';
+        }
     }
 }
