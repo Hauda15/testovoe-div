@@ -18,11 +18,13 @@ class TicketService
         return $ticket->save();
     }
 
-    public function updateTicket(string $id, UpdateTicketRequest $request)
+    public function updateTicket(string $id, UpdateTicketRequest $request): bool
     {
         $ticket = Ticket::findOrFail($id);
-        $ticket->update($request->validated());
-        Mail::to($ticket->email)->send(new TicketMail($ticket));
-        return $ticket;
+        if($ticket->update($request->validated())) {
+            Mail::to($ticket->email)->send(new TicketMail($ticket));
+            return true;
+        }
+        return false;
     }
 }

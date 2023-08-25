@@ -1,0 +1,215 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Тестовое задание div.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/login": {
+            "post": {
+                "summary": "Авторизация пользователя",
+                "operationId": "d55f416d61f094eb6038b566bc6e4596",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Электронная почта пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Пароль пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "token: {token}"
+                    },
+                    "401": {
+                        "description": "Неверный логин или пароль"
+                    }
+                }
+            }
+        },
+        "/requests": {
+            "get": {
+                "summary": "Список активных заявок",
+                "operationId": "77a4167a37e5558ab49748cbdc9c9ed9",
+                "responses": {
+                    "200": {
+                        "description": "Список заявок в статусе Active"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Создание заявки",
+                "operationId": "5864ac5114017b896ef1bc730cf5e516",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Имя пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Электронная почта пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "in": "query",
+                        "description": "Вопрос пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Заявка успешно отправлена."
+                    },
+                    "400": {
+                        "description": "Ошибка при отправке заявки. Проверьте данные."
+                    }
+                }
+            }
+        },
+        "/requests/{id}": {
+            "put": {
+                "summary": "Добавить ответ к заявке и обновить статус",
+                "operationId": "03dc269903b92b2a63879152c9dca9f7",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Статус заявки. Доступные значения: {Active, Resolved}",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "comment",
+                        "in": "query",
+                        "description": "Ответ работника на заявку пользователя. Обязателен если статус Resolved находится в полезной нагрузке.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Заявка обновлена."
+                    },
+                    "400": {
+                        "description": "Ошибка при обновлении заявки. Проверьте данные."
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Удалить заявку",
+                "operationId": "baac3a48fc69ee07f551d511675035f2",
+                "responses": {
+                    "200": {
+                        "description": "Успешно удалено."
+                    },
+                    "400": {
+                        "description": "Не найдено такой заявки."
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "summary": "Register a new user",
+                "operationId": "f1fde7f4a932e393f6042d1b92e65b0a",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "User's name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "User's password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "summary": "Get current user details",
+                "operationId": "ef4f995bb845dccabb5be9d317e2880b",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "User's Bearer token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    }
+}

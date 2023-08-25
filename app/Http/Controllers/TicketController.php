@@ -15,36 +15,98 @@ class TicketController extends Controller
         $this->service = new TicketService();
     }
 
+    /**
+     * @OA\Get(
+     *   path="/requests",
+     *   summary="Список активных заявок",
+     *   @OA\Response(
+     *     response=200,
+     *     description="Список заявок в статусе Active"
+     *   ),
+     * )
+     */
     public function index()
     {
         $tickets = Ticket::where('status', 'Active')->get();
-        return response($tickets, 200);
+        return response()->json(['requests' => $tickets]);
     }
 
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/requests",
+     *     summary="Создание заявки",
+     *     @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="Имя пользователя",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="Электронная почта пользователя",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="message",
+     *         in="query",
+     *         description="Вопрос пользователя",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(response="200", description="Заявка успешно отправлена."),
+     *     @OA\Response(response="400", description="Ошибка при отправке заявки. Проверьте данные.")
+     * )
      */
     public function store(StoreTicketRequest $request)
     {
         if($this->service->storeTicket($request)) {
-            return response(
-                'Заявка успешно отправлена!', 200
-            )->header('Content-Type', 'text/plain');
+            return response()->json(
+                ['description' => 'Заявка успешно отправлена.']
+            );
         } else {
             return response(
-                'Ошибка при отправке заявки. Проверьте данные.', 400
-            )->header('Content-Type', 'text/plain');
+                ['description' => 'Ошибка при отправке заявки. Проверьте данные.'], 400
+            );
         }
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/requests/{id}",
+     *     summary="Добавить ответ к заявке и обновить статус",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Статус заявки. Доступные значения: {Active, Resolved}",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *     ),
+     *     @OA\Parameter(
+     *         name="comment",
+     *         in="query",
+     *         description="Ответ работника на заявку пользователя. Обязателен если статус Resolved находится в полезной нагрузке.",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(response="200", description="Заявка обновлена."),
+     *     @OA\Response(response="400", description="Ошибка при обновлении заявки. Проверьте данные.")
+     * )
      */
     public function update(UpdateTicketRequest $request, string $id)
     {
-        $ticket = $this->service->updateTicket($id, $request);
-        return response($ticket, 200);
+        if($this->service->updateTicket($id, $request)) {
+            return response()->json(
+                ['description' => 'Заявка обновлена.']
+            );
+        } else {
+            return response()->json(
+                ['description' => 'Ошибка при обновлении заявки. Проверьте данные.'], 400
+            );
+        }
     }
 
     public function create()
@@ -52,13 +114,21 @@ class TicketController extends Controller
         return view('Ticket.create');
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/requests/{id}",
+     *     summary="Удалить заявку",
+     *     @OA\Response(response="200", description="Успешно удалено."),
+     *     @OA\Response(response="400", description="Не найдено такой заявки.")
+     * )
+     */
     public function destroy(string $id)
     {
         try {
             Ticket::findOrFail($id)->delete();
-            return response('Успешно удалено', 200);
+            return response()->json(['description' => 'Успешно удалено.']);
         } catch (ModelNotFoundException) {
-            return 'Не найдено такой заявки.';
+            return response()->json(['description' => 'Не найдено такой заявки.'], 404);
         }
     }
 }
